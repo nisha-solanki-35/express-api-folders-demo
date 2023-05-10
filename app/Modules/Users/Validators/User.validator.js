@@ -1,6 +1,6 @@
 const checkUser = (req, res, next) => {
-    console.log('is username is correct?')
-    next()
-}
+  console.log('is username is correct?');
+  next();
+};
 
-module.exports = { checkUser }
+module.exports = { checkUser };

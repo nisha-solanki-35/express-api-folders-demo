@@ -1,11 +1,12 @@
-const express = require("express");
-require('dotenv').config()
-const config = require("./config/config");
-const app = express()
+const express = require('express');
+require('dotenv').config();
+const config = require('./config/config');
 
-require("./app/routes/index")
+const app = express();
 
-app.listen(config.PORT, (err, res) => {
-	if (err) console.log(err);
-	console.log(`PORT listening on ${config.PORT}`);
-})
+require('./app/routes/index')(app);
+
+app.listen(config.PORT, (err) => {
+  if (err) console.log(err);
+  console.log(`PORT listening on ${config.PORT}`);
+});

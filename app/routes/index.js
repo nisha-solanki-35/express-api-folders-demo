@@ -1,8 +1,7 @@
-const express = require("express");
-const app = express()
+const indexFile = require('../Modules/Users/index');
 
-const routes = () => { 
-  app.use("/api/user", require("../Modules/Users/index")
-)}
+const routes = (app) => {
+  app.use('/api/user', indexFile);
+};
 
-module.exports = routes
+module.exports = routes;
