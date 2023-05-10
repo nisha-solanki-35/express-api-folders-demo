@@ -1,0 +1,24 @@
+{
+  "name": "express-api-folders-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yudiz-nisha-solanki/express-api-folders-demo.git"
+  },
+  "author": "Nisha Solanki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yudiz-nisha-solanki/express-api-folders-demo/issues"
+  },
+  "homepage": "https://github.com/yudiz-nisha-solanki/express-api-folders-demo#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
+  }
+}
