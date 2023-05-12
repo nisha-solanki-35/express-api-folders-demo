@@ -1,7 +1,7 @@
-const indexFile = require('../Modules/Users/index');
+const usersIndexFile = require('../Modules/Users/index');
 
 const routes = (app) => {
-  app.use('/api/user', indexFile);
+  app.use('/api/user', usersIndexFile);
 };
 
 module.exports = routes;

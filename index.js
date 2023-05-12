@@ -4,7 +4,9 @@ const config = require('./config/config');
 
 const app = express();
 
-require('./app/routes/index')(app);
+const routesIndex = require('./app/routes/index');
+
+routesIndex(app);
 
 app.listen(config.PORT, (err) => {
   if (err) console.log(err);
