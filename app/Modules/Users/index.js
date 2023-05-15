@@ -1,6 +1,8 @@
 const route = require('express').Router();
-const validators = require('./Validators/User.validator');
+const validator = require('./Validators/Validator');
+const middleware = require('./Middlewares/Middleware');
+const controller = require('./Controllers/Controller');
 
-route.get('/users/v1', validators.checkUser, (req, res) => res.send('yes'));
+route.post('/users/v1', validator.checkUser, middleware.validateUserData, controller.AddUser);
 
 module.exports = route;
