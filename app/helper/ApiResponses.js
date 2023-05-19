@@ -32,14 +32,4 @@ const jsonStatus = {
   TooManyRequest: 429
 }
 
-const checkOneCapitalOtherLetters = (value) => {
-  const isUsernameValid = /^[A-Z]{1}[0-9]+$/
-  return !!(value.match(isUsernameValid))
-}
-
-const check16LengthPassword = (value) => {
-  const isPasswordValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{16}$/
-  return !!(value.match(isPasswordValid))
-}
-
-module.exports = { status, jsonStatus, checkOneCapitalOtherLetters, check16LengthPassword }
+module.exports = { status, jsonStatus }
