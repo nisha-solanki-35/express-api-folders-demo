@@ -5,4 +5,6 @@ const oEnv = {
   prod: { PORT: process.env.PORT },
 };
 
-module.exports = oEnv[process.env.NODE_ENV || 'test'];
+const JWT_KEY = process.env.JWT_SECRET_KEY
+
+module.exports = { PORT: oEnv[process.env.NODE_ENV || 'test'].PORT, JWT_KEY }

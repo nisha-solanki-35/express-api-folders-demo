@@ -2,9 +2,10 @@ const { status, jsonStatus } = require("../../../helper/ApiResponses");
 const { validationResult } = require('express-validator')
 const { body } = require('express-validator')
 
-const checkUserDataFields = [
+const checkRegisterUserDataFields = [
   body('sUsername').not().isEmpty(),
-  body('sPassword').not().isEmpty()
+  body('sPassword').not().isEmpty(),
+  body('sEmail').not().isEmpty()
 ]
 
 const checkUserData = (req, res, next) => {
@@ -16,6 +17,12 @@ const checkUserData = (req, res, next) => {
   }
 };
 
-const checkUser = [checkUserDataFields, checkUserData]
+const checkLoginUserDataFields = [
+  body('sUsername').not().isEmpty(),
+  body('sPassword').not().isEmpty()
+]
 
-module.exports = { checkUser };
+const checkRegisterUser = [checkRegisterUserDataFields, checkUserData]
+const checkLoginUser = [checkLoginUserDataFields, checkUserData]
+
+module.exports = { checkRegisterUser, checkLoginUser };
