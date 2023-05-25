@@ -87,31 +87,20 @@ const Login = (req, res) => {
 }
 
 const UpdateUser = (req, res) => {
-  const registrationData = req.body
   let usersData = []
-  if (fs.existsSync(path.dirname(__dirname) + '/files/Users.json')) {
-    let users = fs.readFileSync(path.dirname(__dirname) + '/files/Users.json', 'utf-8')
-    if (users === '') {
-      usersData.push(registrationData)
-      fs.writeFileSync(path.dirname(__dirname) + '/files/Users.json', JSON.stringify(usersData))
-      return res.status(status.OK).jsonp({ status: jsonStatus.OK, message: 'Registered successfully' })
-    } else {
-      const index = JSON.parse(users)?.findIndex(data => data.sUsername === registrationData.sUsername)
-      if (index >= 0) {
-        return res.status(status.BadRequest).jsonp({ status: jsonStatus.BadRequest, message: 'User already exist!!' })
-      } else {
-        usersData = [...JSON.parse(users)]
-        usersData.push(registrationData)
-        fs.writeFileSync(path.dirname(__dirname) + '/files/Users.json', JSON.stringify(usersData))
-        return res.status(status.OK).jsonp({ status: jsonStatus.OK, message: 'Registered successfully' })
-      }
-    }
-  } else {
-    const usersData = []
-    usersData.push(registrationData)
-    fs.writeFileSync(path.dirname(__dirname) + '/files/Users.json', JSON.stringify(usersData))
-    return res.status(status.OK).jsonp({ status: jsonStatus.OK, message: 'Registered successfully' })
+  const { sUsername } = req.body
+  const userData = req.user
+  const users = fs.readFileSync(path.dirname(__dirname) + '/files/Users.json', 'utf-8')
+  usersData = [...JSON.parse(users)]
+  const userIndex = JSON.parse(users)?.findIndex(data => data._id === userData._id)
+  if (userIndex < 0) return res.status(status.BadRequest).jsonp({ status: jsonStatus.BadRequest, message: 'User not found!' })
+
+  usersData[userIndex] = {
+    ...usersData[userIndex],
+    sUsername
   }
+  fs.writeFileSync(path.dirname(__dirname) + '/files/Users.json', JSON.stringify(usersData))
+  return res.status(status.OK).jsonp({ status: jsonStatus.OK, message: 'Username updated successfully' })
 }
 
 const ChangePassword = async(req, res) => {
