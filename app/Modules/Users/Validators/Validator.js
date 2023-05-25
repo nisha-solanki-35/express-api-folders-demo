@@ -22,7 +22,14 @@ const checkLoginUserDataFields = [
   body('sPassword').not().isEmpty()
 ]
 
+const checkChangePasswordFields = [
+  body('sUsername').not().isEmpty(),
+  body('sOldPassword').not().isEmpty(),
+  body('sNewPassword').not().isEmpty()
+]
+
 const checkRegisterUser = [checkRegisterUserDataFields, checkUserData]
 const checkLoginUser = [checkLoginUserDataFields, checkUserData]
+const checkChangePassword = [checkChangePasswordFields, checkUserData]
 
-module.exports = { checkRegisterUser, checkLoginUser };
+module.exports = { checkRegisterUser, checkLoginUser, checkChangePassword };

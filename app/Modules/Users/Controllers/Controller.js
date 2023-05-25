@@ -3,7 +3,7 @@ const path = require('path')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const { status, jsonStatus } = require('../../../helper/ApiResponses');
-const { encryptPassword, generateToken } = require('../../../helper/helper');
+const { createPasswordHash, generateToken } = require('../../../helper/helper');
 const config = require('../../../../config/config');
 
 const GetUserDetails = (req, res) => {
@@ -28,7 +28,7 @@ const Register = async (req, res) => {
     let users = fs.readFileSync(path.dirname(__dirname) + '/files/Users.json', 'utf-8')
     if (users === '') {
       const { userId, sToken } = await generateToken()
-      const sPassword = await encryptPassword(registrationData?.sPassword)
+      const sPassword = await createPasswordHash(registrationData?.sPassword)
       const userRegistrationData = { ...registrationData, _id: userId, sPassword, sToken, sOriginalPassword: registrationData?.sPassword }
       usersData.push(userRegistrationData)
       fs.writeFileSync(path.dirname(__dirname) + '/files/Users.json', JSON.stringify(usersData))
@@ -40,7 +40,7 @@ const Register = async (req, res) => {
       } else {
         usersData = [...JSON.parse(users)]
         const { userId, sToken } = await generateToken()
-        const sPassword = await encryptPassword(registrationData?.sPassword)
+        const sPassword = await createPasswordHash(registrationData?.sPassword)
         const userRegistrationData = { ...registrationData, _id: userId, sPassword, sToken, sOriginalPassword: registrationData?.sPassword } 
         usersData.push(userRegistrationData)
         fs.writeFileSync(path.dirname(__dirname) + '/files/Users.json', JSON.stringify(usersData))
@@ -49,7 +49,7 @@ const Register = async (req, res) => {
     }
   } else {
     const { userId, sToken } = await generateToken()
-    const sPassword = encryptPassword(registrationData?.sPassword);
+    const sPassword = createPasswordHash(registrationData?.sPassword);
     const userRegistrationData = { ...registrationData, _id: userId, sPassword, sToken, sOriginalPassword: registrationData?.sPassword }
     usersData.push(userRegistrationData)
     fs.writeFileSync(path.dirname(__dirname) + '/files/Users.json', JSON.stringify(usersData))
@@ -68,7 +68,7 @@ const Login = (req, res) => {
       message: 'User not found!'
     })
   }
-  
+
   if (!bcrypt.compareSync(sPassword, admin?.sPassword)) {
     return res.status(status.BadRequest).jsonp({
       status: jsonStatus.BadRequest,
@@ -114,8 +114,34 @@ const UpdateUser = (req, res) => {
   }
 }
 
-const ChangePassword = (req, res) => {
+const ChangePassword = async(req, res) => {
+  let usersData = []
+  const { sOldPassword, sNewPassword } = req.body
+  const userData = req.user
+  
+  if (!bcrypt.compareSync(sOldPassword, userData?.sPassword)) {
+    return res.status(status.BadRequest).jsonp({
+      status: jsonStatus.BadRequest,
+      message: 'Password is incorrect!'
+    })
+  }
 
+  const newPassword = await createPasswordHash(sNewPassword)
+  const users = fs.readFileSync(path.dirname(__dirname) + '/files/Users.json', 'utf-8')
+  usersData = [...JSON.parse(users)]
+  const userIndex = JSON.parse(users)?.findIndex(data => data._id === userData._id)
+  console.log('userIndex', userData, userIndex)
+  if (userIndex < 0) return res.status(status.BadRequest).jsonp({ status: jsonStatus.BadRequest, message: 'User not found!' })
+
+  usersData[userIndex] = {
+    ...usersData[userIndex],
+    sPassword: newPassword,
+    sOriginalPassword: sNewPassword
+  }
+  console.log('users', users)
+  console.log('usersData', usersData)
+  fs.writeFileSync(path.dirname(__dirname) + '/files/Users.json', JSON.stringify(usersData))
+  return res.status(status.OK).jsonp({ status: jsonStatus.OK, message: 'Password was reset successfully' })
 }
 
 module.exports = { GetUserDetails, Register, Login, UpdateUser, ChangePassword }

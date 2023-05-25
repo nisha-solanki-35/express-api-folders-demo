@@ -1,3 +1,7 @@
+const jwt = require("jsonwebtoken");
+const fs = require('fs')
+const path = require('path')
+const config = require("../../../../config/config");
 const { status, jsonStatus } = require("../../../helper/ApiResponses");
 const { checkOneCapitalOtherLetters, check16LengthPassword, checkAllSmallLettersOneSymbol, checkOneCapitalOneSymbol16Length, isEmail, decryption, encryption } = require("../../../helper/helper");
 
@@ -25,13 +29,13 @@ const RegisterV2 = (req, res, next) => {
   else next()
 };
 
-const LoginV1 = (req, res, next) => {
+const encrypt = (req, res, next) => {
   const { sPassword } = req.body
   req.body.sPassword = encryption(sPassword)
   next()
 };
 
-const decrypt = function (req, res, next) {
+const decrypt = (req, res, next) => {
   const { sPassword, sOldPassword, sNewPassword } = req.body
   if (sPassword) {
     req.body.sPassword = decryption(sPassword)
@@ -44,4 +48,35 @@ const decrypt = function (req, res, next) {
   next()
 }
 
-module.exports = { GetUserDetails, RegisterV1, RegisterV2, LoginV1, decrypt };
+const ValidateUser = (req, res, next) => {
+  const token = req.header('authorization')
+  if (!token) {
+    return res.status(status.Unauthorized).jsonp({
+      status: jsonStatus.Unauthorized,
+      message: 'Authentication failed!'
+    })
+  } else {
+    let decoded
+    try {
+      decoded = jwt.verify(token, config.JWT_KEY)
+    } catch (e) {
+      return res.status(status.Unauthorized).jsonp({
+        status: jsonStatus.Unauthorized,
+        message: 'Authentication failed!'
+      })
+    }
+    const { userId } = decoded
+    const users = fs.readFileSync(path.dirname(__dirname) + '/files/Users.json', 'utf-8')
+    const user = JSON.parse(users)?.find(data => data._id === userId)
+    if (!user) {
+      return res.status(status.Unauthorized).jsonp({
+        status: jsonStatus.Unauthorized,
+        message: 'Authentication failed!'
+      })
+    }
+    req.user = user
+    return next()
+  }
+}
+
+module.exports = { GetUserDetails, RegisterV1, RegisterV2, encrypt, decrypt, ValidateUser };

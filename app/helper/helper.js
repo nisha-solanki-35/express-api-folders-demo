@@ -11,7 +11,7 @@ const isEmail = (value) => {
   return !!(value.match(isEmailValid))
 }
 
-const encryptPassword = async(password) => {
+const createPasswordHash = async(password) => {
   const encryptedPassword = await bcrypt.hash(password, 10);
   return encryptedPassword
 }
@@ -69,4 +69,4 @@ const checkAllNumbers16length = (value) => {
   return !!(value.match(isPasswordValid))
 }
 
-module.exports = { isEmail, encryptPassword, generateToken, encryption, decryption, checkOneCapitalOtherLetters, check16LengthPassword, checkAllSmallLettersOneSymbol, checkOneCapitalOneSymbol16Length, checkAllCapitalLetters, checkAllNumbers16length }
+module.exports = { isEmail, createPasswordHash, generateToken, encryption, decryption, checkOneCapitalOtherLetters, check16LengthPassword, checkAllSmallLettersOneSymbol, checkOneCapitalOneSymbol16Length, checkAllCapitalLetters, checkAllNumbers16length }
